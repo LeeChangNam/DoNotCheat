@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:weightSum="3"
+    android:paddingTop="300dp"
+    android:paddingBottom="100dp"
+    tools:context=".ExamSignIn">
+    <EditText
+        android:id="@+id/examName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="number"
+        android:paddingLeft="20dp"
+        android:text="exam name"
+        android:textColor="#a0a0a0"
+        android:background="#D9D9D9"
+        android:textSize="30dp" />
+    <EditText
+        android:id="@+id/examCode"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:inputType="number"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="20dp"
+        android:text="exam code"
+        android:textColor="#a0a0a0"
+        android:background="#D9D9D9"
+        android:textSize="30dp" />
+    <Button
+        android:id="@+id/join"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="입장"
+        android:textSize="30dp" />
+</LinearLayout>

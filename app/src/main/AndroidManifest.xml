@@ -12,6 +12,15 @@
         android:theme="@style/Theme.DoNotCheat"
         tools:targetApi="31">
         <activity
+            android:name=".Exam"
+            android:exported="false" />
+        <activity
+            android:name=".ManagerSignIn"
+            android:exported="false" />
+        <activity
+            android:name=".ExamSignIn"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
