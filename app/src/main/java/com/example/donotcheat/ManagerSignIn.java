@@ -1,5 +1,7 @@
 package com.example.donotcheat;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,15 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ManagerSignIn extends AppCompatActivity {
     EditText code;
     Button join;
     FirebaseFirestore db;
+    FirebaseFirestore input = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +74,26 @@ public class ManagerSignIn extends AppCompatActivity {
             examCreateDlg(code);
         }
     }
-
+    void examCreate(String code, String name, String subject,String managerName, String managerNum){
+        Map<String, Object> roomObject = new HashMap<>();
+        roomObject.put("managerName",managerName);
+        roomObject.put("managerNum",managerNum);
+        roomObject.put("subject",subject);
+        input.collection("exam").document(code)
+                .set(roomObject)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
     public void examCreateDlg(String code) {
         final LinearLayout linear = (LinearLayout) View.inflate(ManagerSignIn.this, R.layout.create_exam_dialog, null);
         AlertDialog.Builder dlg = new AlertDialog.Builder(ManagerSignIn.this);
@@ -78,8 +106,11 @@ public class ManagerSignIn extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 TextView examCode = (EditText) linear.findViewById(R.id.managerCode);
                 EditText name = (EditText) linear.findViewById(R.id.examName);
-                EditText type = (EditText) linear.findViewById(R.id.examType);
+                EditText subject = (EditText) linear.findViewById(R.id.examType);
+                EditText managerName = (EditText) linear.findViewById(R.id.managerName);
+                EditText managerNum = (EditText) linear.findViewById(R.id.managerNum);
                 examCode.setText(code);
+                examCreate(code,String.valueOf(name),String.valueOf(subject),String.valueOf(managerName),String.valueOf(managerNum));
                 Intent intent = new Intent(getApplicationContext(), Exam.class); // 관리자 뷰로 넘어가야함
                 finish();
                 startActivity(intent);
