@@ -14,10 +14,11 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:inputType="number"
+        android:inputType="text"
         android:paddingLeft="20dp"
-        android:text="exam name"
-        android:textColor="#a0a0a0"
+        android:hint="exam name"
+        android:textColorHint="#a0a0a0"
+        android:textColor="#000"
         android:background="#D9D9D9"
         android:textSize="30dp" />
     <EditText
@@ -28,8 +29,9 @@
         android:inputType="number"
         android:layout_marginTop="20dp"
         android:paddingLeft="20dp"
-        android:text="exam code"
-        android:textColor="#a0a0a0"
+        android:hint="exam code"
+        android:textColorHint="#a0a0a0"
+        android:textColor="#000"
         android:background="#D9D9D9"
         android:textSize="30dp" />
     <Button

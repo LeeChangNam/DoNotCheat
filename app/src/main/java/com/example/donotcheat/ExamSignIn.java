@@ -1,5 +1,7 @@
 package com.example.donotcheat;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,15 +18,22 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ExamSignIn extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
+    private FirebaseFirestore input = FirebaseFirestore.getInstance();
+
     EditText nameText;
     EditText codeText;
     Button joinButton;
@@ -38,7 +48,7 @@ public class ExamSignIn extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                joinExam(codeText.getText().toString(),nameText.getText().toString());
+                codeCheck(codeText.getText().toString(),nameText.getText().toString());
             }
         });
     }
@@ -58,6 +68,7 @@ public class ExamSignIn extends AppCompatActivity {
                 EditText phone = (EditText) linear.findViewById(R.id.usrPhone);
                 //nameInputDlg를 SignIn 앞에 뷰 하나를 만들어서 거기서 처리하는게 나아보임
                 //아니면 입력된 3개의 정보로 수험자와 일치하는지 판별을 여기서 해버리면 더 편할지도?
+                joinExam(code,num.getText().toString(),room.getText().toString(),name.getText().toString(),phone.getText().toString());
                 Intent intent = new Intent(getApplicationContext(), Exam.class); // 시험 뷰로 넘어가야함
                 finish();
                 startActivity(intent);
@@ -71,23 +82,82 @@ public class ExamSignIn extends AppCompatActivity {
         });
         dlg.show();
     }
-    void joinExam(String code, String name) {
+    void joinExam(String code, String userNum, String subject, String userName, String phoneNum){
+        Map<String, Object> roomObject = new HashMap<>();
+        Map<String, Object> errorObject = new HashMap<>();
+        errorObject.put("errorCount","0");
+        errorObject.put("errorImage","");
+        errorObject.put("errorTime","");
+        roomObject.put("name",userName);
+        roomObject.put("phone",phoneNum);
+        //사용자 정보를 db에 저장
+        input.collection("exam").document(code)
+                .collection("userList").document(userNum)
+                .set(roomObject)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+        //사용자 error정보를 db에 저장
+        db.collection("exam").document(userNum)
+                .collection("userList").document(userNum)
+                .collection("cheat")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        long idx = 0;
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                idx = Long.parseLong(document.getId());
+                                System.out.println(document.getId());
+                            }
+                        } else {
+                        }
+                        idx++;
+                        final long id = idx;
+                        input.collection("exam").document(userNum)
+                                .collection("userList").document(userNum)
+                                .collection("cheat").document(String.valueOf(id))
+                                .set(errorObject)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+                    }
+                });
+    }
+    void codeCheck(String code, String name) {
         final int[] flag = {0};
         if (code == "") {
             Toast.makeText(ExamSignIn.this, "코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        if (code.length() < 4) {Toast.makeText(ExamSignIn.this, "4자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        db.collection("examRoom")
+        if (code.length() < 8) {Toast.makeText(ExamSignIn.this, "8자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
+        db.collection("exam")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         String codes;
-                        String names;
                         if (task.isSuccessful()){
                             for (QueryDocumentSnapshot document : task.getResult()){
-                                codes = (String) document.getData().get("code");
-                                names = (String) document.getData().get("name");
-                                if (code.equals(codes) == true && name.equals(names) == true){
+                                codes = (String) document.getId();
+                                if (code.equals(codes) == true){
                                     nameInputDlg(code,name);
                                     flag[0] = 1;
                                 }

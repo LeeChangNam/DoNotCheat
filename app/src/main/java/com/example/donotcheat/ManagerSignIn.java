@@ -43,7 +43,7 @@ public class ManagerSignIn extends AppCompatActivity {
         final int[] flag = {0};
         if (code == "") {
             Toast.makeText(ManagerSignIn.this, "코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        if (code.length() < 4) {Toast.makeText(ManagerSignIn.this, "4자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
+        if (code.length() < 8) {Toast.makeText(ManagerSignIn.this, "8자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
         db.collection("examRoom")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -65,6 +65,7 @@ public class ManagerSignIn extends AppCompatActivity {
             examCreateDlg(code);
         }
     }
+
     public void examCreateDlg(String code) {
         final LinearLayout linear = (LinearLayout) View.inflate(ManagerSignIn.this, R.layout.create_exam_dialog, null);
         AlertDialog.Builder dlg = new AlertDialog.Builder(ManagerSignIn.this);
@@ -78,7 +79,7 @@ public class ManagerSignIn extends AppCompatActivity {
                 TextView examCode = (EditText) linear.findViewById(R.id.managerCode);
                 EditText name = (EditText) linear.findViewById(R.id.examName);
                 EditText type = (EditText) linear.findViewById(R.id.examType);
-
+                examCode.setText(code);
                 Intent intent = new Intent(getApplicationContext(), Exam.class); // 관리자 뷰로 넘어가야함
                 finish();
                 startActivity(intent);
