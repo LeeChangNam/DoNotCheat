@@ -33,7 +33,6 @@ public class ExamSignIn extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private FirebaseFirestore input = FirebaseFirestore.getInstance();
-
     EditText nameText;
     EditText codeText;
     Button joinButton;
@@ -62,10 +61,10 @@ public class ExamSignIn extends AppCompatActivity {
 
         dlg.setPositiveButton("입장",new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                EditText num = (EditText) linear.findViewById(R.id.usrCode);
+                EditText num = (EditText) linear.findViewById(R.id.userCode);
                 EditText room = (EditText) linear.findViewById(R.id.examRoomName);
-                EditText name = (EditText) linear.findViewById(R.id.usrName);
-                EditText phone = (EditText) linear.findViewById(R.id.usrPhone);
+                EditText name = (EditText) linear.findViewById(R.id.userName);
+                EditText phone = (EditText) linear.findViewById(R.id.userPhone);
                 //nameInputDlg를 SignIn 앞에 뷰 하나를 만들어서 거기서 처리하는게 나아보임
                 //아니면 입력된 3개의 정보로 수험자와 일치하는지 판별을 여기서 해버리면 더 편할지도?
                 joinExam(code,num.getText().toString(),room.getText().toString(),name.getText().toString(),phone.getText().toString());
@@ -77,7 +76,6 @@ public class ExamSignIn extends AppCompatActivity {
         dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
             }
         });
         dlg.show();

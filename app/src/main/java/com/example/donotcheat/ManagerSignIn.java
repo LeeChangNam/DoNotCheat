@@ -111,7 +111,7 @@ public class ManagerSignIn extends AppCompatActivity {
                 EditText managerNum = (EditText) linear.findViewById(R.id.managerNum);
                 examCode.setText(code);
                 examCreate(code,String.valueOf(name),String.valueOf(subject),String.valueOf(managerName),String.valueOf(managerNum));
-                Intent intent = new Intent(getApplicationContext(), Exam.class); // 관리자 뷰로 넘어가야함
+                Intent intent = new Intent(getApplicationContext(), ExamManagement.class); // 관리자 뷰로 넘어가야함
                 finish();
                 startActivity(intent);
             }

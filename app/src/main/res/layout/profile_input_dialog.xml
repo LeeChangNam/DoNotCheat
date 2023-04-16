@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_weight="4">
             <EditText
-                android:id="@+id/usrCode"
+                android:id="@+id/userCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
@@ -102,7 +102,7 @@
             android:layout_height="match_parent"
             android:layout_weight="4">
             <EditText
-                android:id="@+id/usrName"
+                android:id="@+id/userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -137,7 +137,7 @@
             android:layout_height="match_parent"
             android:layout_weight="4">
             <EditText
-                android:id="@+id/usrPhone"
+                android:id="@+id/userPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
