@@ -6,9 +6,17 @@
     android:background="#ffffff"
     android:orientation="vertical"
     android:weightSum="3"
-    android:paddingTop="250dp"
+    android:paddingTop="150dp"
     android:paddingBottom="100dp"
     tools:context=".ManagerSignIn">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center"
+        android:layout_marginBottom = "100dp"
+        android:text="시험장 생성"
+        android:textSize="50dp"
+        />
     <EditText
         android:id="@+id/managerCode"
         android:layout_width="300dp"
@@ -16,7 +24,7 @@
         android:layout_gravity="center"
         android:inputType="number"
         android:paddingLeft="20dp"
-        android:hint="exam name"
+        android:hint="exam code"
         android:textColorHint="#a0a0a0"
         android:textColor="#000"
         android:background="#D9D9D9"

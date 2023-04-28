@@ -12,14 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.ManagementViewHolder> {
-    private ArrayList<String> item;
-
-    public ManagementAdapter( ArrayList<String> item){this.item = item;}
+    Context context;
+    private ArrayList<String> item = new ArrayList<>();
+    OnItemClickListener listener;
+    public ManagementAdapter(Context context){this.context = context;}
 
     public int getItemCount() {
         return item.size();
     }
-
+    public static interface OnItemClickListener {
+        public void onItemClick(ManagementViewHolder holder, View view, int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public ManagementViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,25 +38,38 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Ma
 
     @Override
     public void onBindViewHolder(ManagementViewHolder holder, int position) {
-        holder.item_userNum.setText(item.get(position).getModelName());
+        String items = item.get(position);
+        holder.setItem(items);
+    }
+    public void addItem(String roomName) {
+        item.add(roomName);
+    }
+    public String getItem(int position) {
+        return item.get(position);
     }
 
     public class ManagementViewHolder extends RecyclerView.ViewHolder {
-        TextView item_userNum;
+        OnItemClickListener listener;
+        TextView itemUserNum;
         View itemView;
 
         public ManagementViewHolder (View itemView){
             super(itemView);
-            this.itemView=itemView;
-
-            item_userNum=itemView.findViewById(R.id.userNum);
+            itemUserNum = (TextView) itemView.findViewById(R.id.userNum);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    int position = getAdapterPosition();
+                    if(listener != null) {
+                        listener.onItemClick(ManagementViewHolder.this, v, position);
+                    }
                 }
             });
+        }
+        public void setItem(String roomName) { itemUserNum.setText(roomName); }
+        public void setOnItemClickListener(OnItemClickListener listener) {
+            this.listener = listener;
         }
     }
 }

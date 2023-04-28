@@ -48,12 +48,17 @@ public class ManagerSignIn extends AppCompatActivity {
             }
         });
     }
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        finish();
+        startActivity(intent);
+    }
     void createExam(String code) {
         final int[] flag = {0};
         if (code == "") {
             Toast.makeText(ManagerSignIn.this, "코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
         if (code.length() < 8) {Toast.makeText(ManagerSignIn.this, "8자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        db.collection("examRoom")
+        db.collection("exam1")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -61,7 +66,7 @@ public class ManagerSignIn extends AppCompatActivity {
                         String codes;
                         if (task.isSuccessful()){
                             for (QueryDocumentSnapshot document : task.getResult()){
-                                codes = (String) document.getData().get("code");
+                                codes = (String) document.getId();
                                 if (code.equals(codes)){
                                     flag[0] = 1;
                                 }
@@ -77,6 +82,7 @@ public class ManagerSignIn extends AppCompatActivity {
     void examCreate(String code, String name, String subject,String managerName, String managerNum){
         Map<String, Object> roomObject = new HashMap<>();
         roomObject.put("managerName",managerName);
+        roomObject.put("examName",name);
         roomObject.put("managerNum",managerNum);
         roomObject.put("subject",subject);
         input.collection("exam").document(code)
@@ -104,7 +110,7 @@ public class ManagerSignIn extends AppCompatActivity {
 
         dlg.setPositiveButton("입장",new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                TextView examCode = (EditText) linear.findViewById(R.id.managerCode);
+                TextView examCode = (TextView) linear.findViewById(R.id.showManagerCode);
                 EditText name = (EditText) linear.findViewById(R.id.examName);
                 EditText subject = (EditText) linear.findViewById(R.id.examType);
                 EditText managerName = (EditText) linear.findViewById(R.id.managerName);
@@ -112,6 +118,7 @@ public class ManagerSignIn extends AppCompatActivity {
                 examCode.setText(code);
                 examCreate(code,String.valueOf(name),String.valueOf(subject),String.valueOf(managerName),String.valueOf(managerNum));
                 Intent intent = new Intent(getApplicationContext(), ExamManagement.class); // 관리자 뷰로 넘어가야함
+                intent.putExtra("방번호",code);
                 finish();
                 startActivity(intent);
             }

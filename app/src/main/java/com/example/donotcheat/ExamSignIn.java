@@ -51,6 +51,12 @@ public class ExamSignIn extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        finish();
+        startActivity(intent);
+    }
     public void nameInputDlg(String code, String name) {
         final LinearLayout linear = (LinearLayout) View.inflate(ExamSignIn.this, R.layout.profile_input_dialog, null);
         AlertDialog.Builder dlg = new AlertDialog.Builder(ExamSignIn.this);

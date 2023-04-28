@@ -6,9 +6,17 @@
     android:background="#ffffff"
     android:orientation="vertical"
     android:weightSum="3"
-    android:paddingTop="300dp"
+    android:paddingTop="150dp"
     android:paddingBottom="100dp"
     tools:context=".ExamSignIn">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center"
+        android:layout_marginBottom = "100dp"
+        android:text="시험장 입장"
+        android:textSize="50dp"
+        />
     <EditText
         android:id="@+id/examName"
         android:layout_width="300dp"

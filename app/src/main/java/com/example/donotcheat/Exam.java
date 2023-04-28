@@ -31,4 +31,9 @@ public class Exam extends AppCompatActivity {
             }
         });
     }
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        finish();
+        startActivity(intent);
+    }
 }
