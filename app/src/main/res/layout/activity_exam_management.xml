@@ -18,7 +18,7 @@
             android:layout_weight="869"
             android:orientation="horizontal">
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/show_added_profile_recylerView"
+                android:id="@+id/showUserListRecylerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbarFadeDuration="0"

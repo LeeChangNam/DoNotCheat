@@ -24,11 +24,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
-public class ExamManagement extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ExamManagement extends AppCompatActivity{
     FirebaseAuth auth = FirebaseAuth.getInstance();
     FirebaseFirestore userList;
     Intent secondIntent = getIntent();
-
     FirebaseFirestore db;
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
@@ -38,7 +37,7 @@ public class ExamManagement extends AppCompatActivity implements NavigationView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam_management);
-        recyclerView = (RecyclerView) findViewById(R.id.show_added_profile_recylerView);
+        recyclerView = (RecyclerView) findViewById(R.id.showUserListRecylerView);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), new LinearLayoutManager(this).getOrientation());
@@ -48,12 +47,12 @@ public class ExamManagement extends AppCompatActivity implements NavigationView.
         getExamData(adapter,examineeItems,secondIntent.getStringExtra("방번호"));
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
         adapter.setOnItemClickListener(new ManagementAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(ManagementAdapter.ManagementViewHolder holder, View view, int position) {
                 Intent intent = new Intent(getApplicationContext(), ExamineeInfo.class);
-                intent.putExtra("방번호",adapter.getItem(position));
+                intent.putExtra("수험번호",adapter.getItem(position));
+                intent.putExtra("방번호",secondIntent.getStringExtra("방번호"));
                 finish();
                 startActivity(intent);
             }
@@ -84,9 +83,5 @@ public class ExamManagement extends AppCompatActivity implements NavigationView.
                         }
                     }
                 });
-    }
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
     }
 }
