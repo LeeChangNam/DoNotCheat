@@ -7,16 +7,15 @@
     android:orientation="vertical"
     android:weightSum="3"
     android:paddingTop="150dp"
-    android:paddingBottom="100dp"
     tools:context=".ManagerSignIn">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity = "center"
-        android:layout_marginBottom = "100dp"
-        android:text="시험장 생성"
-        android:textSize="50dp"
-        />
+        android:layout_marginBottom = "50dp"
+        android:text="시험장\n생성 또는 입장"
+        android:gravity="center"
+        android:textSize="50dp" />
     <EditText
         android:id="@+id/managerCode"
         android:layout_width="300dp"
@@ -36,5 +35,13 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:text="시험장 생성"
+        android:textSize="30dp" />
+    <Button
+        android:id="@+id/examEntrance"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="시험장 입장"
         android:textSize="30dp" />
 </LinearLayout>

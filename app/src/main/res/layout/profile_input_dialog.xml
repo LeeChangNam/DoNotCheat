@@ -34,42 +34,7 @@
             <EditText
                 android:id="@+id/userCode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:layout_marginRight="50dp"/>
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="7">
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="시험명"
-            android:textColor="#000"
-            android:textSize="18sp"
-            android:paddingLeft="30dp"
-            android:layout_marginBottom="5dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text=" : "
-            android:textColor="#000"
-            android:textSize="18sp"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="4">
-            <EditText
-                android:id="@+id/examRoomName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:inputType="number"
                 android:textColor="#000000"
                 android:textSize="18sp"
@@ -104,42 +69,7 @@
             <EditText
                 android:id="@+id/userName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:layout_marginRight="50dp"/>
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="7">
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="전화번호"
-            android:textColor="#000"
-            android:textSize="18sp"
-            android:paddingLeft="30dp"
-            android:layout_marginBottom="5dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text=" : "
-            android:textColor="#000"
-            android:textSize="18sp"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="4">
-            <EditText
-                android:id="@+id/userPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:inputType="text"
                 android:textColor="#000000"
                 android:textSize="18sp"

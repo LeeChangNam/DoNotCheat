@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.ManagementViewHolder> {
+public class CheatListAdapter extends RecyclerView.Adapter<CheatListAdapter.CheatListViewHolder> {
     private Context context;
-    private OnItemClickListener listener;
+    private CheatListAdapter.OnItemClickListener listener;
     private ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> num = new ArrayList<String>();
     private HashMap<String,Object> userItems = new HashMap<>();
-
+    //item 변경만 바꾸면됨
     public void putItem(HashMap<String,Object> userItem) { userItems.putAll(userItem);}
     public Object popItem(String key){ return userItems.get(key); }
     public void addNum(String roomNum){num.add(roomNum);}
@@ -27,29 +27,29 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Ma
     public String getItem(int position) {return items.get(position);}
 
 
-    public void setOnItemClickListener(OnItemClickListener listener) {this.listener = listener;}
-    public static interface OnItemClickListener { public void onItemClick(ManagementViewHolder holder, View view, int position);}
+    public void setOnItemClickListener(CheatListAdapter.OnItemClickListener listener) {this.listener = listener;}
+    public static interface OnItemClickListener { public void onItemClick(CheatListAdapter.CheatListViewHolder holder, View view, int position);}
 
     @Override
     public int getItemCount() {return items.size();}
-    public ManagementAdapter(Context context) {this.context = context;}
+    public CheatListAdapter(Context context) {this.context = context;}
     @Override
-    public ManagementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CheatListAdapter.CheatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View itemView = inflater.inflate(R.layout.user_list, parent, false);
 
-        return new ManagementViewHolder(itemView);
+        return new CheatListAdapter.CheatListViewHolder(itemView);
     }
     @Override
-    public void onBindViewHolder(@NonNull ManagementViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CheatListAdapter.CheatListViewHolder holder, int position) {
         String item = items.get(position);
         holder.setItem(item);
         holder.setOnItemClickListener(listener);
     }
-    static class ManagementViewHolder extends RecyclerView.ViewHolder {
-        OnItemClickListener listener;
+    static class CheatListViewHolder extends RecyclerView.ViewHolder {
+        CheatListAdapter.OnItemClickListener listener;
         TextView itemUserNum;
-        public ManagementViewHolder(@NonNull View itemView) {
+        public CheatListViewHolder(@NonNull View itemView) {
             super(itemView);
             itemUserNum = (TextView) itemView.findViewById(R.id.userList);
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -57,13 +57,13 @@ public class ManagementAdapter extends RecyclerView.Adapter<ManagementAdapter.Ma
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if(listener != null) {
-                        listener.onItemClick(ManagementViewHolder.this, view, position);
+                        listener.onItemClick(CheatListAdapter.CheatListViewHolder.this, view, position);
                     }
                 }
             });
 
         }
         public void setItem(String userNum) { itemUserNum.setText(userNum); }
-        public void setOnItemClickListener(OnItemClickListener listener) {this.listener = listener;}
+        public void setOnItemClickListener(CheatListAdapter.OnItemClickListener listener) {this.listener = listener;}
     }
 }

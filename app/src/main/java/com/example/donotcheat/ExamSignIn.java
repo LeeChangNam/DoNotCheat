@@ -21,26 +21,26 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class ExamSignIn extends AppCompatActivity {
-    private FirebaseAuth auth;
-    private FirebaseFirestore db;
-    private FirebaseFirestore input = FirebaseFirestore.getInstance();
-    EditText nameText;
-    EditText codeText;
-    Button joinButton;
-
+    private EditText nameText;
+    private EditText codeText;
+    private Button joinButton;
+    private FirebaseFirestore codeCheck = FirebaseFirestore.getInstance();
+    private FirebaseFirestore subjectCheck = FirebaseFirestore.getInstance();
+    private FirebaseFirestore examineeInput = FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam_sign_in);
+
         nameText = (EditText) findViewById(R.id.examName);
         codeText = (EditText) findViewById(R.id.examCode);
         joinButton = (Button) findViewById(R.id.join);
@@ -51,13 +51,40 @@ public class ExamSignIn extends AppCompatActivity {
             }
         });
     }
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        finish();
-        startActivity(intent);
+    private void codeCheck(String code,String subject){
+        if (code.equals("")) {
+            Toast.makeText(ExamSignIn.this, "코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
+        if (code.length() < 8) {Toast.makeText(ExamSignIn.this, "8자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
+        codeCheck.collection("exam")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        String codes;
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()){
+                                codes = (String) document.getId();
+                                if (code.equals(codes) == true){
+                                    subjectCheck.collection("exam").document(code)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if(subject.equals(task.getResult().getData().get("subject"))){
+                                                        examineeInfoDlg(code,subject);
+                                                    }
+                                                    else{
+                                                        Toast.makeText(ExamSignIn.this, "시험과목이 일치하지 않습니다.", Toast.LENGTH_LONG).show(); return;
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                        }
+                    }
+                });
     }
-    public void nameInputDlg(String code, String name) {
+    private void examineeInfoDlg(String code, String subject){
         final LinearLayout linear = (LinearLayout) View.inflate(ExamSignIn.this, R.layout.profile_input_dialog, null);
         AlertDialog.Builder dlg = new AlertDialog.Builder(ExamSignIn.this);
         dlg.setTitle("시험장 입장"); //제목
@@ -68,13 +95,13 @@ public class ExamSignIn extends AppCompatActivity {
         dlg.setPositiveButton("입장",new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 EditText num = (EditText) linear.findViewById(R.id.userCode);
-                EditText room = (EditText) linear.findViewById(R.id.examRoomName);
                 EditText name = (EditText) linear.findViewById(R.id.userName);
-                EditText phone = (EditText) linear.findViewById(R.id.userPhone);
                 //nameInputDlg를 SignIn 앞에 뷰 하나를 만들어서 거기서 처리하는게 나아보임
                 //아니면 입력된 3개의 정보로 수험자와 일치하는지 판별을 여기서 해버리면 더 편할지도?
-                joinExam(code,num.getText().toString(),room.getText().toString(),name.getText().toString(),phone.getText().toString());
+                joinExam(code,num.getText().toString(),name.getText().toString());
                 Intent intent = new Intent(getApplicationContext(), Exam.class); // 시험 뷰로 넘어가야함
+                intent.putExtra("수험번호",num.getText().toString());
+                intent.putExtra("방번호",code);
                 finish();
                 startActivity(intent);
             }
@@ -86,18 +113,12 @@ public class ExamSignIn extends AppCompatActivity {
         });
         dlg.show();
     }
-    void joinExam(String code, String userNum, String subject, String userName, String phoneNum){
-        Map<String, Object> roomObject = new HashMap<>();
-        Map<String, Object> errorObject = new HashMap<>();
-        errorObject.put("errorCount","0");
-        errorObject.put("errorImage","");
-        errorObject.put("errorTime","");
-        roomObject.put("name",userName);
-        roomObject.put("phone",phoneNum);
-        //사용자 정보를 db에 저장
-        input.collection("exam").document(code)
-                .collection("userList").document(userNum)
-                .set(roomObject)
+    private void joinExam(String code,String examineeNum,String examineeName){
+        HashMap<String,String> examineeInfo = new HashMap<>();
+        examineeInfo.put("examineeName",examineeName);
+        examineeInput.collection("exam").document(code)
+                .collection("userList").document(examineeNum)
+                .set(examineeInfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -110,65 +131,5 @@ public class ExamSignIn extends AppCompatActivity {
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
-        //사용자 error정보를 db에 저장
-        db.collection("exam").document(userNum)
-                .collection("userList").document(userNum)
-                .collection("cheat")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        long idx = 0;
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                idx = Long.parseLong(document.getId());
-                                System.out.println(document.getId());
-                            }
-                        } else {
-                        }
-                        idx++;
-                        final long id = idx;
-                        input.collection("exam").document(userNum)
-                                .collection("userList").document(userNum)
-                                .collection("cheat").document(String.valueOf(id))
-                                .set(errorObject)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error writing document", e);
-                                    }
-                                });
-                    }
-                });
-    }
-    void codeCheck(String code, String name) {
-        final int[] flag = {0};
-        if (code == "") {
-            Toast.makeText(ExamSignIn.this, "코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        if (code.length() < 8) {Toast.makeText(ExamSignIn.this, "8자리 코드를 입력해주세요.", Toast.LENGTH_LONG).show(); return;}
-        db.collection("exam")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        String codes;
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                codes = (String) document.getId();
-                                if (code.equals(codes) == true){
-                                    nameInputDlg(code,name);
-                                    flag[0] = 1;
-                                }
-                            }
-                        }
-                    }
-                });
-        if (flag[0] == 0){Toast.makeText(ExamSignIn.this, "해당 코드로 입장 가능한 방이 없습니다.", Toast.LENGTH_LONG).show(); return;}
     }
 }

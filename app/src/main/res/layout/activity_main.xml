@@ -27,6 +27,7 @@
             android:layout_marginTop="100dp"
             android:text="수험자로 로그인"
             android:textSize="30dp"
+            android:background="#91ADF3"
             />
         <Button
             android:id="@+id/managerSignIn"
@@ -35,7 +36,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:text="관리자로 로그인"
-            android:textSize="30dp"/>
+            android:textSize="30dp"
+            android:background="#91ADF3"/>
     </LinearLayout>
 
 
