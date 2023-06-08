@@ -1,25 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical"
-    android:weightSum="8"
-    tools:context=".Exam">
-    <TextureView
-        android:id="@+id/cam"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="7"
-        />
-    <Button
-        android:id="@+id/finish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="시험종료"
-        android:textSize="30dp"
-        />
+    tools:context=".Exam"
+    android:keepScreenOn="true">
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

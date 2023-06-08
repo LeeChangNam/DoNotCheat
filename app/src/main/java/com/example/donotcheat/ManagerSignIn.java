@@ -2,10 +2,6 @@ package com.example.donotcheat;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -119,7 +118,7 @@ public class ManagerSignIn extends AppCompatActivity {
 
 
                 examCreate(code,subject.getText().toString(),managerName.getText().toString(),managerNum.getText().toString());
-                Intent intent = new Intent(getApplicationContext(), ExamManagement.class);
+                Intent intent = new Intent(ManagerSignIn.this, ExamManagement.class);
                 intent.putExtra("방번호",code);
                 finish();
                 startActivity(intent);

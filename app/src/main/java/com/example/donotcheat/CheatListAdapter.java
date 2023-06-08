@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class CheatListAdapter extends RecyclerView.Adapter<CheatListAdapter.CheatListViewHolder> {
     private Context context;
-    private CheatListAdapter.OnItemClickListener listener;
+    private OnItemClickListener listener;
     private ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> num = new ArrayList<String>();
     private HashMap<String,Object> userItems = new HashMap<>();
@@ -27,27 +27,27 @@ public class CheatListAdapter extends RecyclerView.Adapter<CheatListAdapter.Chea
     public String getItem(int position) {return items.get(position);}
 
 
-    public void setOnItemClickListener(CheatListAdapter.OnItemClickListener listener) {this.listener = listener;}
-    public static interface OnItemClickListener { public void onItemClick(CheatListAdapter.CheatListViewHolder holder, View view, int position);}
+    public void setOnItemClickListener(OnItemClickListener listener) {this.listener = listener;}
+    public static interface OnItemClickListener { public void onItemClick(CheatListViewHolder holder, View view, int position);}
 
     @Override
     public int getItemCount() {return items.size();}
     public CheatListAdapter(Context context) {this.context = context;}
     @Override
-    public CheatListAdapter.CheatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CheatListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View itemView = inflater.inflate(R.layout.user_list, parent, false);
 
-        return new CheatListAdapter.CheatListViewHolder(itemView);
+        return new CheatListViewHolder(itemView);
     }
     @Override
-    public void onBindViewHolder(@NonNull CheatListAdapter.CheatListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CheatListViewHolder holder, int position) {
         String item = items.get(position);
         holder.setItem(item);
         holder.setOnItemClickListener(listener);
     }
     static class CheatListViewHolder extends RecyclerView.ViewHolder {
-        CheatListAdapter.OnItemClickListener listener;
+        OnItemClickListener listener;
         TextView itemUserNum;
         public CheatListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,13 +57,13 @@ public class CheatListAdapter extends RecyclerView.Adapter<CheatListAdapter.Chea
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if(listener != null) {
-                        listener.onItemClick(CheatListAdapter.CheatListViewHolder.this, view, position);
+                        listener.onItemClick(CheatListViewHolder.this, view, position);
                     }
                 }
             });
 
         }
         public void setItem(String userNum) { itemUserNum.setText(userNum); }
-        public void setOnItemClickListener(CheatListAdapter.OnItemClickListener listener) {this.listener = listener;}
+        public void setOnItemClickListener(OnItemClickListener listener) {this.listener = listener;}
     }
 }

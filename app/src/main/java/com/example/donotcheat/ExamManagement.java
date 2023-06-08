@@ -1,14 +1,14 @@
 package com.example.donotcheat;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,17 +19,22 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 
 public class ExamManagement extends AppCompatActivity {
-    private Intent secondIntent = getIntent();
+    private Intent secondIntent;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private ManagementAdapter adapter;
-    private HashMap<String,Object> examineeItems;
+    private HashMap<String,Object> examineeItems = new HashMap<>();
     private FirebaseFirestore examineeInfo = FirebaseFirestore.getInstance();
+    private String code;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam_management);
 
+        secondIntent = getIntent();
+        System.out.println("ExamManagement");
+        code = secondIntent.getStringExtra("방번호");
+        System.out.println("방번호 : "+ code);
         recyclerView = (RecyclerView) findViewById(R.id.showUserListRecylerView);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -37,18 +42,18 @@ public class ExamManagement extends AppCompatActivity {
         dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.white_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
         adapter = new ManagementAdapter(getApplicationContext());
-        getExamineeData(adapter,examineeItems,secondIntent.getStringExtra("방번호"));
+        getExamineeData(adapter,code);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         adapter.setOnItemClickListener(new ManagementAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(ManagementAdapter.ManagementViewHolder holder, View view, int position) {
-                /*Intent intent = new Intent(getApplicationContext(), ExamineeInfo.class);
-                //intent.putExtra("수험번호",adapter.getItem(position));
-                //intent.putExtra("방번호",secondIntent.getStringExtra("방번호"));
+                Intent intent = new Intent(getApplicationContext(), ExamineeInfo.class);
+                intent.putExtra("수험번호",adapter.getItem(position));
+                intent.putExtra("방번호",code);
                 finish();
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
     }
@@ -57,7 +62,7 @@ public class ExamManagement extends AppCompatActivity {
         finish();
         startActivity(intent);
     }
-    private void getExamineeData(ManagementAdapter adapter, HashMap<String,Object> userItems, String code){
+    private void getExamineeData(ManagementAdapter adapter, String code){
         examineeInfo.collection("exam").document(code)
                 .collection("userList")
                 .get()
@@ -70,10 +75,10 @@ public class ExamManagement extends AppCompatActivity {
                                 userObject.put("examineeName", user.getData().get("examineeName"));
 
                                 String userNum = (String) user.getId();
-                                userItems.putAll(userObject);
+                                examineeItems.putAll(userObject);
 
                                 adapter.addItem(userNum);
-                                adapter.putItem(userItems);
+                                adapter.putItem(examineeItems);
                                 adapter.addNum(userNum);
                             }
                             adapter.notifyDataSetChanged();

@@ -1,6 +1,8 @@
 package com.example.donotcheat;
 
-import static android.content.ContentValues.TAG;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,16 +10,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,33 +19,39 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 
 public class ExamineeInfo extends AppCompatActivity {
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    LinearLayoutManager linearLayoutManager;
-    FirebaseFirestore db;
-    RecyclerView recyclerView;
-    CheatAdapter adapter;
-
-    HashMap<String,Object> userItems;
+    private Intent secondIntent;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerView recyclerView;
+    private CheatListAdapter adapter;
+    private HashMap<String,Object> cheatItems = new HashMap<>();
+    private FirebaseFirestore cheatInfo = FirebaseFirestore.getInstance();
+    private String code;
+    private String examineeNum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_examinee_info);
-        Intent secondIntent = getIntent();
+
+        secondIntent = getIntent();
+        code = secondIntent.getStringExtra("방번호");
+        examineeNum= secondIntent.getStringExtra("수험번호");
+
         recyclerView = (RecyclerView) findViewById(R.id.showCheatListRecylerView);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), new LinearLayoutManager(this).getOrientation());
         dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.white_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
-        adapter = new CheatAdapter(getApplicationContext());
-        getCheatData(adapter,userItems,secondIntent.getStringExtra("수험번호"),secondIntent.getStringExtra("방번호"));
+        adapter = new CheatListAdapter(getApplicationContext());
+        getCheatData(adapter,examineeNum,code);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        adapter.setOnItemClickListener(new CheatAdapter.OnItemClickListener() {
+
+        adapter.setOnItemClickListener(new CheatListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(CheatAdapter.CheatViewHolder holder, View view, int position) {
-                Intent intent = new Intent(getApplicationContext(), ExamineeInfo.class);
-                intent.putExtra("시간",adapter.getItem(position));
+            public void onItemClick(CheatListAdapter.CheatListViewHolder holder, View view, int position) {
+                Intent intent = new Intent(getApplicationContext(), CheatInfo.class);
+                intent.putExtra("부정행위 시간",adapter.getItem(position));
                 intent.putExtra("방번호",secondIntent.getStringExtra("방번호"));
                 intent.putExtra("수험번호",secondIntent.getStringExtra("수험번호"));
                 finish();
@@ -59,28 +59,34 @@ public class ExamineeInfo extends AppCompatActivity {
             }
         });
     }
-    @Override
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), ExamManagement.class);
         finish();
         startActivity(intent);
     }
-    public void getCheatData(CheatAdapter adapter, HashMap<String, Object> userItems,String userCode,String roomCode){
-        FirebaseUser user = auth.getCurrentUser();
-        db.collection("exam1").document(roomCode)
-                .collection("userList").document(userCode)
+    private void getCheatData(CheatListAdapter adapter,String examineeNum, String examCode){
+        cheatInfo.collection("exam").document(examCode)
+                .collection("userList").document(examineeNum)
                 .collection("cheatList")
-                .get()// cheatList에서 document들을 가져와 시간 값을 가져오는 작업해야함
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                adapter.addItem((String) document.getId());
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            for (QueryDocumentSnapshot cheat : task.getResult()) {
+                                HashMap<String, Object> cheatObject = new HashMap<>();
+                                cheatObject.put("cheatTime", cheat.getData().get("cheatTime"));
+                                cheatObject.put("imageName", cheat.getData().get("imageName"));
+                                cheatObject.put("length", cheat.getData().get("length"));
+
+                                String cheatTime = (String) cheat.getId();
+                                cheatItems.putAll(cheatObject);
+
+                                adapter.addItem(cheatTime);
+                                adapter.putItem(cheatItems);
+                                adapter.addNum(cheatTime);
                             }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });

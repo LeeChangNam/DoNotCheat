@@ -1,8 +1,5 @@
 package com.example.donotcheat;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,11 +7,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -29,14 +27,19 @@ public class CheatInfo extends AppCompatActivity {
     private TextView length;
     private TextView otherInfo;
     private TextView empty;
-    private Intent secondIntent = getIntent();
-    private HashMap<String,String> cheatInfo = new HashMap<>();
+    private Intent secondIntent;
+    private HashMap<String,Object> cheatInfo = new HashMap<>();
+    private CheatListAdapter cheatListAdapter;
     private FirebaseFirestore cheatDb = FirebaseFirestore.getInstance();
+    private FirebaseFirestore cheatDbb = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference imageDb = storage.getReference();
     private StorageReference pathReference;
     private StorageReference imageGet;
-    String root;
+    private String root="/";
+    String examineeNum;
+    String examCode;
+    String time;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,13 +52,17 @@ public class CheatInfo extends AppCompatActivity {
         otherInfo= (TextView)findViewById(R.id.otherInfo);
         empty= (TextView)findViewById(R.id.empty);
 
-        String examineeNum = secondIntent.getStringExtra("수험번호");
-        String examCode = secondIntent.getStringExtra("방번호");
-        String time = secondIntent.getStringExtra("부정행위 시간");
+        secondIntent = getIntent();
+        examineeNum = secondIntent.getStringExtra("수험번호");
+        examCode = secondIntent.getStringExtra("방번호");
+        time = secondIntent.getStringExtra("부정행위 시간");
 
         getCheatData(examineeNum,examCode,time);
+        root = root.concat(examCode);
+        root = root.concat("/");
+        root = root.concat(examineeNum);
+        System.out.println(root);
 
-        root.concat(examCode).concat("/").concat(examineeNum);
         getCheatImage(time,root);
     }
     public void onBackPressed() {
@@ -65,10 +72,13 @@ public class CheatInfo extends AppCompatActivity {
     }
     private void getCheatImage(String cheatTime, String root){
         pathReference = imageDb.child(root);
+        System.out.println(root);
         if (pathReference == null){
             Toast.makeText(CheatInfo.this,"저장소에 사진이 없습니다.",Toast.LENGTH_SHORT).show();
         }else{
-            imageGet = imageDb.child(root.concat("/").concat(cheatTime).concat(".png"));
+            root = root.concat("/").concat(cheatTime).concat(".png");
+            System.out.println(root);
+            imageGet = imageDb.child(root);
             imageGet.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
@@ -86,20 +96,17 @@ public class CheatInfo extends AppCompatActivity {
                 .collection("userList").document(examineeNum)
                 .collection("cheatList").document(time)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        cheatInfo.put("cheatTime",(String)task.getResult().getData().get("cheatTime"));
-                        cheatInfo.put("imageName",(String)task.getResult().getData().get("imageName"));
-                        cheatInfo.put("length",(String)task.getResult().getData().get("length"));
-                        cheatInfo.put("otherInfo",(String)task.getResult().getData().get("otherInfo"));
-                        cheatInfo.put("empty",(String)task.getResult().getData().get("empty"));
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        cheatTime.setText((String)documentSnapshot.getData().get("cheatTime"));
+                        imageName.setText((String)documentSnapshot.getData().get("imageName"));
+                        length.setText((String)documentSnapshot.getData().get("length"));
+                        otherInfo.setText((String)documentSnapshot.getData().get("otherInfo"));
+                        empty.setText((String)documentSnapshot.getData().get("empty"));
+
                     }
                 });
-        cheatTime.setText(cheatInfo.get("cheatTime"));
-        imageName.setText(cheatInfo.get("imageName"));
-        length.setText(cheatInfo.get("length"));
-        otherInfo.setText(cheatInfo.get("otherInfo"));
-        empty.setText(cheatInfo.get("empty"));
+
     }
 }
