@@ -22,7 +22,7 @@ public class ExamManagement extends AppCompatActivity {
     private Intent secondIntent;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-    private ManagementAdapter adapter;
+    private com.google.mlkit.vision.demo.ManagementAdapter adapter;
     private HashMap<String,Object> examineeItems = new HashMap<>();
     private FirebaseFirestore examineeInfo = FirebaseFirestore.getInstance();
     private String code;
@@ -41,14 +41,14 @@ public class ExamManagement extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), new LinearLayoutManager(this).getOrientation());
         dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.white_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
-        adapter = new ManagementAdapter(getApplicationContext());
+        adapter = new com.google.mlkit.vision.demo.ManagementAdapter(getApplicationContext());
         getExamineeData(adapter,code);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        adapter.setOnItemClickListener(new ManagementAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new com.google.mlkit.vision.demo.ManagementAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(ManagementAdapter.ManagementViewHolder holder, View view, int position) {
+            public void onItemClick(com.google.mlkit.vision.demo.ManagementAdapter.ManagementViewHolder holder, View view, int position) {
                 Intent intent = new Intent(getApplicationContext(), ExamineeInfo.class);
                 intent.putExtra("수험번호",adapter.getItem(position));
                 intent.putExtra("방번호",code);
@@ -58,11 +58,11 @@ public class ExamManagement extends AppCompatActivity {
         });
     }
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), ManagerSignIn.class);
+        Intent intent = new Intent(getApplicationContext(), com.google.mlkit.vision.demo.ManagerSignIn.class);
         finish();
         startActivity(intent);
     }
-    private void getExamineeData(ManagementAdapter adapter, String code){
+    private void getExamineeData(com.google.mlkit.vision.demo.ManagementAdapter adapter, String code){
         examineeInfo.collection("exam").document(code)
                 .collection("userList")
                 .get()

@@ -73,8 +73,9 @@ public class Exam extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
-        examFinishButton = (Button) findViewById(R.id.finish);
-        examStart = (TextureView) findViewById(R.id.cam);
+        //examFinishButton = (Button) findViewById(R.id.finish);
+        //examStart = (TextureView) findViewById(R.id.cam);
+        System.out.println("iiiiiiiiiiiiiiiiiiiiiii");
 
         Intent secondIntent = getIntent();
         userNum = secondIntent.getStringExtra("수험번호");
@@ -90,7 +91,7 @@ public class Exam extends AppCompatActivity {
         examFinishButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), com.google.mlkit.vision.demo.MainActivity.class);
                 //capture();
                 finish();
                 startActivity(intent);

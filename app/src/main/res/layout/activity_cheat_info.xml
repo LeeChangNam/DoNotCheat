@@ -56,34 +56,24 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:weightSum="3">
+            android:weightSum="2">
             <TextView
-                android:id="@+id/length"
+                android:id="@+id/defaults"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="20dp"
-                android:text="length"
+                android:text="defaults"
                 android:gravity="center_vertical"
                 android:background="#DEE6FB"
                 android:textSize="20sp"/>
             <TextView
-                android:id="@+id/otherInfo"
+                android:id="@+id/errorValue"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="20dp"
-                android:text="otherInfo"
-                android:gravity="center_vertical"
-                android:background="#DEE6FB"
-                android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/empty"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:text="empty"
+                android:text="errorValue"
                 android:gravity="center_vertical"
                 android:background="#DEE6FB"
                 android:textSize="20sp"/>

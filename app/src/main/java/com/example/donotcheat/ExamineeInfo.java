@@ -60,7 +60,7 @@ public class ExamineeInfo extends AppCompatActivity {
         });
     }
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), ExamManagement.class);
+        Intent intent = new Intent(getApplicationContext(), com.google.mlkit.vision.demo.ExamManagement.class);
         finish();
         startActivity(intent);
     }

@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.mlkit.vision.demo.java.LivePreviewActivity;
 
 import java.util.HashMap;
 
@@ -98,7 +99,7 @@ public class ExamSignIn extends AppCompatActivity {
                 //nameInputDlg를 SignIn 앞에 뷰 하나를 만들어서 거기서 처리하는게 나아보임
                 //아니면 입력된 3개의 정보로 수험자와 일치하는지 판별을 여기서 해버리면 더 편할지도?
                 joinExam(code,num.getText().toString(),name.getText().toString());
-                Intent intent = new Intent(getApplicationContext(), Exam.class); // 시험 뷰로 넘어가야함
+                Intent intent = new Intent(getApplicationContext(), LivePreviewActivity.class); // 시험 뷰로 넘어가야함
                 intent.putExtra("수험번호",num.getText().toString());
                 intent.putExtra("방번호",code);
                 finish();
@@ -113,7 +114,8 @@ public class ExamSignIn extends AppCompatActivity {
         dlg.show();
     }
     private void joinExam(String code,String examineeNum,String examineeName){
-        HashMap<String,String> examineeInfo = new HashMap<>();
+        HashMap<String,Object> examineeInfo = new HashMap<>();
+        examineeInfo.put("start",true);
         examineeInfo.put("examineeName",examineeName);
         examineeInput.collection("exam").document(code)
                 .collection("userList").document(examineeNum)
